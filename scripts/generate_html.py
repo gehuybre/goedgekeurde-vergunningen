@@ -88,38 +88,57 @@ class DashboardGenerator:
         """Create trend chart with monthly data and moving average"""
         fig = go.Figure()
         
+        # Create traces in order: each gewest's maand + trend together
         for gewest in self.gewesten:
             gewest_data = data[data['gemeente_naam_nl'] == gewest].sort_values('datum').reset_index(drop=True)
             
             if len(gewest_data) == 0:
                 continue
                 
-            # Calculate 4-quarter moving average
+            # Ensure data is clean and numeric
             gewest_data = gewest_data.copy()
+            gewest_data[metric] = pd.to_numeric(gewest_data[metric], errors='coerce').fillna(0)
             gewest_data[f'{metric}_12m'] = gewest_data[metric].rolling(window=4, min_periods=1).mean()
+            
+            # Convert to basic Python types to avoid any pandas/plotly issues
+            x_values = [d.strftime('%Y-%m-%d') for d in gewest_data['datum']]
+            y_values = gewest_data[metric].astype(float).tolist()
+            y_trend_values = gewest_data[f'{metric}_12m'].astype(float).tolist()
             
             color = self.gewest_colors[gewest]
             
-            # Monthly data (dotted line)
+            # Add monthly data trace first
             fig.add_trace(go.Scatter(
-                x=gewest_data['datum'].tolist(),
-                y=gewest_data[metric].tolist(),
+                x=x_values,
+                y=y_values,
                 mode='lines+markers',
                 name=f'{gewest} (maand)',
                 line=dict(color=color, dash='dot', width=2),
                 marker=dict(size=4),
                 opacity=0.7,
-                showlegend=True
+                showlegend=True,
+                legendgroup=gewest,  # Group traces by gewest
+                legendgrouptitle_text=gewest,
+                customdata=gewest_data[['jaar', 'periode']].values,
+                hovertemplate='<b>%{fullData.name}</b><br>' +
+                             'Datum: %{x}<br>' +
+                             'Waarde: %{y:,.0f}<br>' +
+                             'Jaar: %{customdata[0]}<br>' +
+                             'Periode: Q%{customdata[1]}<extra></extra>'
             ))
             
-            # Moving average (solid line)
+            # Add moving average trace second (will appear below monthly in legend)
             fig.add_trace(go.Scatter(
-                x=gewest_data['datum'].tolist(),
-                y=gewest_data[f'{metric}_12m'].tolist(),
+                x=x_values,
+                y=y_trend_values,
                 mode='lines',
                 name=f'{gewest} (trend)',
                 line=dict(color=color, width=3),
-                showlegend=True
+                showlegend=True,
+                legendgroup=gewest,  # Same group as monthly trace
+                hovertemplate='<b>%{fullData.name}</b><br>' +
+                             'Datum: %{x}<br>' +
+                             'Trend waarde: %{y:,.1f}<extra></extra>'
             ))
         
         fig.update_layout(
@@ -145,15 +164,19 @@ class DashboardGenerator:
             ),
             hovermode='x unified',
             legend=dict(
-                orientation="h",
-                yanchor="bottom",
-                y=-0.25,
-                xanchor="center",
-                x=0.5,
-                font=dict(size=12)
+                orientation="v",
+                yanchor="top",
+                y=0.99,
+                xanchor="left",
+                x=1.01,
+                font=dict(size=11),
+                bgcolor="rgba(255,255,255,0.8)",
+                bordercolor="rgba(0,0,0,0.2)",
+                borderwidth=1,
+                groupclick="toggleitem"  # Allow toggling individual items within groups
             ),
             height=650,
-            margin=dict(t=80, b=150, l=80, r=50),
+            margin=dict(t=80, b=80, l=80, r=200),  # More right margin for vertical legend
             plot_bgcolor='white',
             paper_bgcolor='white',
             font=dict(family="Arial, sans-serif", size=12)

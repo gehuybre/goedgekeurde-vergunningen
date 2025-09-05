@@ -25,6 +25,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch all history to ensure we have the latest changes
     
     - name: Install uv
       uses: astral-sh/setup-uv@v3
@@ -37,6 +39,13 @@ jobs:
 
     - name: Install dependencies
       run: uv sync
+      
+    - name: Verify script version
+      run: |
+        echo "Checking script timestamp..."
+        ls -la scripts/generate_html.py
+        echo "Script first few lines:"
+        head -10 scripts/generate_html.py
 
     - name: Download and process data
       run: uv run python scripts/download_data.py
