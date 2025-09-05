@@ -6,98 +6,44 @@ on:
   pull_request:
     branches: [ main ]
   schedule:
-    # Run weekly on Sundays at 2 AM UTC
-    - cron: '0 2 * * 0'
-  workflow_dispatch:
+    - cron: '0 6 * * 1'  # Every Monday at 6 AM
+  workflow_dispatch:  # Allow manual triggering
 
 jobs:
-  generate:
+  generate-dashboard:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
     
     - name: Install uv
-      uses: astral-sh/setup-uv@v3
+      uses: astral-sh/setup-uv@v4
       with:
         version: "latest"
-        
+        enable-cache: true
+    
     - name: Set up Python
-      run: uv python install 3.11
-        
+      run: uv python install
+
     - name: Install dependencies
-      run: |
-        uv sync
-        
+      run: uv sync
+
     - name: Download and process data
-      run: |
-        uv run python -c "
-import requests
-import zipfile
-import pandas as pd
-from pathlib import Path
-import sys
-sys.path.append('src')
-from config import DUTCH_COLUMN_NAMES
+      run: uv run python scripts/download_data.py
 
-# Download and process data
-data_dir = Path('data')
-data_dir.mkdir(exist_ok=True)
+    - name: Generate HTML dashboard
+      run: uv run python scripts/generate_html.py
 
-url = 'https://statbel.fgov.be/sites/default/files/files/opendata/Building%20permits/TF_BUILDING_PERMITS.zip'
-zip_path = data_dir / 'TF_BUILDING_PERMITS.zip'
-output_csv = data_dir / 'building_permits.csv'
+    - name: Upload dashboard artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: html-dashboard
+        path: docs/
 
-print('📥 Downloading building permits data...')
-response = requests.get(url, stream=True)
-response.raise_for_status()
-
-with open(zip_path, 'wb') as f:
-    for chunk in response.iter_content(chunk_size=8192):
-        if chunk:
-            f.write(chunk)
-
-print('📦 Extracting ZIP file...')
-with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-    zip_ref.extractall(data_dir)
-    extracted_files = zip_ref.namelist()
-
-data_file = None
-for file in extracted_files:
-    if file.endswith('.txt'):
-        data_file = data_dir / file
-        break
-
-if data_file and data_file.exists():
-    print(f'📊 Converting {data_file.name} to CSV...')
-    df = pd.read_csv(data_file, sep='|', encoding='utf-8', quotechar='\"')
-    df.columns = [col.strip().strip('\"') for col in df.columns]
-    
-    numeric_cols = df.select_dtypes(include=['float64', 'int64']).columns
-    for col in numeric_cols:
-        df[col] = pd.to_numeric(df[col], errors='coerce')
-        if df[col].dtype == 'float64':
-            df[col] = df[col].astype('Int64')
-    
-    df = df.rename(columns=DUTCH_COLUMN_NAMES)
-    df.to_csv(output_csv, index=False)
-    
-    zip_path.unlink()
-    data_file.unlink()
-    
-    print(f'✅ Success! Clean CSV saved as: {output_csv.name}')
-else:
-    print('❌ Error: Could not find data file in ZIP archive')
-"
-        
-    - name: Generate analysis and HTML
-      run: |
-        uv run python scripts/generate_html.py
-        
     - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
       if: github.ref == 'refs/heads/main'
+      uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./docs
-        force_orphan: true
