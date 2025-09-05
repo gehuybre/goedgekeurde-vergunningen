@@ -471,8 +471,8 @@ class DashboardGenerator:
         
         # Add each analysis section
         for analysis in self.analyses:
-            iframe_code_chart = f'&lt;iframe src="https://gehuybre.github.io/goedgekeurde-vergunningen/charts/{analysis["chart_file"]}_standalone.html" width="100%" height="650" frameborder="0"&gt;&lt;/iframe&gt;'
-            iframe_code_table = f'&lt;iframe src="https://gehuybre.github.io/goedgekeurde-vergunningen/tables/{analysis["table_file"]}.html" width="100%" height="400" frameborder="0"&gt;&lt;/iframe&gt;'
+            iframe_code_chart = f'&lt;iframe src=&quot;https://gehuybre.github.io/goedgekeurde-vergunningen/charts/{analysis["chart_file"]}_standalone.html&quot; width=&quot;100%&quot; height=&quot;650&quot; frameborder=&quot;0&quot; title=&quot;{analysis["title"]} - Interactieve grafiek&quot;&gt;&lt;/iframe&gt;'
+            iframe_code_table = f'&lt;iframe src=&quot;https://gehuybre.github.io/goedgekeurde-vergunningen/tables/{analysis["table_file"]}.html&quot; width=&quot;100%&quot; height=&quot;400&quot; frameborder=&quot;0&quot; title=&quot;{analysis["title"]} - Data tabel&quot;&gt;&lt;/iframe&gt;'
             
             html_content += f"""
         <section class="analysis-section" id="{analysis['id']}">
@@ -481,7 +481,7 @@ class DashboardGenerator:
             
             <div class="chart-container">
                 <div class="chart-wrapper">
-                    <iframe src="charts/{analysis['chart_file']}_standalone.html" width="100%" height="650" frameborder="0"></iframe>
+                    <iframe src="charts/{analysis['chart_file']}_standalone.html" width="100%" height="650" frameborder="0" title="{analysis['title']} - Interactieve grafiek"></iframe>
                 </div>
                 <div class="chart-actions">
                     <button class="btn btn-small btn-copy" onclick="copyToClipboard('{iframe_code_chart}', 'Grafiek iframe code gekopieerd!')">Kopieer iframe code voor grafiek</button>
@@ -498,7 +498,7 @@ class DashboardGenerator:
                     </div>
                 </div>
                 <div class="table-scroll">
-                    <iframe src="tables/{analysis['table_file']}.html" width="100%" height="400" frameborder="0"></iframe>
+                    <iframe src="tables/{analysis['table_file']}.html" width="100%" height="400" frameborder="0" title="{analysis['title']} - Data tabel"></iframe>
                 </div>
             </div>
         </section>
@@ -542,10 +542,13 @@ class DashboardGenerator:
     
     <script>
         function copyToClipboard(text, message) {
+            console.log('Copying iframe code:', text);
             // Decode HTML entities
-            const decodedText = text.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+            const decodedText = text.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
+            console.log('Decoded iframe code:', decodedText);
             
             navigator.clipboard.writeText(decodedText).then(function() {
+                console.log('Successfully copied to clipboard');
                 showNotification(message);
             }).catch(function(err) {
                 console.error('Failed to copy: ', err);

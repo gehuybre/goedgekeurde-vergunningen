@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Iframe Copy</title>
+    <style>
+        .btn { padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .copy-notification { position: fixed; top: 20px; right: 20px; background: #27ae60; color: white; padding: 15px; border-radius: 5px; transform: translateX(100%); transition: transform 0.3s ease; }
+        .copy-notification.show { transform: translateX(0); }
+    </style>
+</head>
+<body>
+    <h1>Test Iframe Copy Functionaliteit</h1>
+    
+    <button class="btn" onclick="copyToClipboard('&lt;iframe src=&quot;https://gehuybre.github.io/goedgekeurde-vergunningen/charts/nieuwbouw_woningen_standalone.html&quot; width=&quot;100%&quot; height=&quot;650&quot; frameborder=&quot;0&quot;&gt;&lt;/iframe&gt;', 'Test iframe code gekopieerd!')">Test Kopieer Iframe</button>
+    
+    <div>
+        <h2>Verwachte iframe code:</h2>
+        <pre>&lt;iframe src="https://gehuybre.github.io/goedgekeurde-vergunningen/charts/nieuwbouw_woningen_standalone.html" width="100%" height="650" frameborder="0"&gt;&lt;/iframe&gt;</pre>
+    </div>
+    
+    <div class="copy-notification" id="copyNotification"></div>
+    
+    <script>
+        function copyToClipboard(text, message) {
+            console.log('copyToClipboard called with:', text);
+            // Decode HTML entities
+            const decodedText = text.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
+            console.log('Decoded text:', decodedText);
+            
+            navigator.clipboard.writeText(decodedText).then(function() {
+                console.log('Clipboard write successful');
+                showNotification(message);
+            }).catch(function(err) {
+                console.error('Failed to copy: ', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = decodedText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showNotification(message);
+            });
+        }
+        
+        function showNotification(message) {
+            console.log('showNotification called with:', message);
+            const notification = document.getElementById('copyNotification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
