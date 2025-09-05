@@ -1,4 +1,4 @@
-datum,gewest,jaar,periode,nieuwbouw_woningen_maand,nieuwbouw_woningen_trend
+datum,gewest,jaar,periode,nieuwbouw_woningen_kwartaal,nieuwbouw_woningen_trend
 1996-01-01,Vlaams Gewest,1996,1,2324.0,2324.0
 1996-04-01,Vlaams Gewest,1996,2,2560.0,2442.0
 1996-07-01,Vlaams Gewest,1996,3,3448.0,2777.3

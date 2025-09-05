@@ -91,7 +91,7 @@ class DashboardGenerator:
         """Create trend chart with monthly data and moving average"""
         fig = go.Figure()
         
-        # Create traces in order: each gewest's maand + trend together
+        # Create traces in order: each gewest's kwartaal + trend together
         for gewest in self.gewesten:
             gewest_data = data[data['gemeente_naam_nl'] == gewest].sort_values('datum').reset_index(drop=True)
             
@@ -120,12 +120,12 @@ class DashboardGenerator:
             
             color = self.gewest_colors[gewest]
             
-            # Add monthly data trace first
+            # Add quarterly data trace first
             fig.add_trace(go.Scatter(
                 x=x_values,
                 y=y_values,
                 mode='lines+markers',
-                name=f'{gewest} (maand)',
+                name=f'{gewest} (kwartaal)',
                 line=dict(color=color, dash='dot', width=2),
                 marker=dict(size=4),
                 opacity=0.7,
@@ -138,7 +138,7 @@ class DashboardGenerator:
                              'Waarde: %{y:,.0f}<extra></extra>'
             ))
             
-            # Add moving average trace second (will appear below monthly in legend)
+            # Add moving average trace second (will appear below quarterly in legend)
             fig.add_trace(go.Scatter(
                 x=x_values,
                 y=y_trend_values,
@@ -146,7 +146,7 @@ class DashboardGenerator:
                 name=f'{gewest} (trend)',
                 line=dict(color=color, width=3),
                 showlegend=True,
-                legendgroup=gewest,  # Same group as monthly trace
+                legendgroup=gewest,  # Same group as quarterly trace
                 text=hover_text,
                 hovertemplate='<b>%{fullData.name}</b><br>' +
                              'Periode: %{text}<br>' +
@@ -179,8 +179,8 @@ class DashboardGenerator:
                 orientation="v",
                 yanchor="top",
                 y=0.99,
-                xanchor="left",
-                x=1.01,
+                xanchor="right",
+                x=-0.01,  # Position to the left of the chart
                 font=dict(size=11),
                 bgcolor="rgba(255,255,255,0.8)",
                 bordercolor="rgba(0,0,0,0.2)",
@@ -188,7 +188,7 @@ class DashboardGenerator:
                 groupclick="toggleitem"  # Allow toggling individual items within groups
             ),
             height=650,
-            margin=dict(t=80, b=80, l=80, r=200),  # More right margin for vertical legend
+            margin=dict(t=80, b=80, l=200, r=80),  # More left margin for legend on left side
             plot_bgcolor='white',
             paper_bgcolor='white',
             font=dict(family="Arial, sans-serif", size=12)
@@ -294,7 +294,7 @@ class DashboardGenerator:
                         'gewest': row['gemeente_naam_nl'],
                         'jaar': row['jaar'],
                         'periode': row['periode'],
-                        'nieuwbouw_woningen_maand': row['nieuwbouw_woningen_totaal'],
+                        'nieuwbouw_woningen_kwartaal': row['nieuwbouw_woningen_totaal'],
                         'nieuwbouw_woningen_trend': round(row['nieuwbouw_woningen_12m'], 1)
                     })
         
@@ -308,7 +308,7 @@ class DashboardGenerator:
         analyses.append({
             'id': 'nieuwbouw_woningen',
             'title': 'Nieuwbouw woningen totaal per gewest',
-            'description': 'Evolutie van het aantal nieuwbouw woningen per gewest met maandelijkse data en trend.',
+            'description': 'Evolutie van het aantal nieuwbouw woningen per gewest met kwartaaldata en trend.',
             'chart_file': 'nieuwbouw_woningen',
             'table_html': table1_html,
             'table_file': 'nieuwbouw_woningen_data',
@@ -339,7 +339,7 @@ class DashboardGenerator:
                         'gewest': row['gemeente_naam_nl'],
                         'jaar': row['jaar'],
                         'periode': row['periode'],
-                        'renovatie_gebouwen_maand': row['renovatie_gebouwen_wonen'],
+                        'renovatie_gebouwen_kwartaal': row['renovatie_gebouwen_wonen'],
                         'renovatie_gebouwen_trend': round(row['renovatie_gebouwen_12m'], 1)
                     })
         
@@ -353,7 +353,7 @@ class DashboardGenerator:
         analyses.append({
             'id': 'renovatie_gebouwen',
             'title': 'Renovatie gebouwen wonen per gewest',
-            'description': 'Evolutie van het aantal renovaties van woongebouwen per gewest.',
+            'description': 'Evolutie van het aantal renovaties van woongebouwen per gewest met kwartaaldata en trend.',
             'chart_file': 'renovatie_gebouwen',
             'table_html': table2_html,
             'table_file': 'renovatie_gebouwen_data',
@@ -397,7 +397,7 @@ class DashboardGenerator:
                         'gewest': row['gemeente_naam_nl'],
                         'jaar': row['jaar'],
                         'periode': row['periode'],
-                        'aandeel_flats_maand': round(row['aandeel_flats'], 1),
+                        'aandeel_flats_kwartaal': round(row['aandeel_flats'], 1),
                         'aandeel_flats_trend': round(row['aandeel_flats_12m'], 1),
                         'appartementen_absoluut': row['nieuwbouw_appartementen'],
                         'woningen_totaal': row['nieuwbouw_woningen_totaal']
@@ -413,7 +413,7 @@ class DashboardGenerator:
         analyses.append({
             'id': 'aandeel_flats',
             'title': 'Aandeel flats per gewest',
-            'description': 'Percentage appartementen van het totale aantal nieuwbouw woningen per gewest.',
+            'description': 'Percentage appartementen van het totale aantal nieuwbouw woningen per gewest met kwartaaldata en trend.',
             'chart_file': 'aandeel_flats',
             'table_html': table3_html,
             'table_file': 'aandeel_flats_data',
