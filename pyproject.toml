@@ -1,0 +1,16 @@
+[project]
+name = "goedgekeurde-vergunningen"
+version = "0.1.0"
+description = "Download and analyze building permits data from Statbel"
+requires-python = ">=3.11"
+dependencies = [
+    "pandas>=2.0.0",
+    "plotly>=5.0.0",
+    "jupyter>=1.0.0",
+    "openpyxl>=3.0.0",
+    "xlrd>=2.0.0",
+    "notebook>=7.0.0",
+    "ipykernel>=6.0.0",
+    "requests>=2.25.0",
+    "python-calamine>=0.5.0"
+]
