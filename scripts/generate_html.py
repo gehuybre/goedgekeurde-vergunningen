@@ -101,7 +101,7 @@ class DashboardGenerator:
             # Ensure data is clean and numeric
             gewest_data = gewest_data.copy()
             gewest_data[metric] = pd.to_numeric(gewest_data[metric], errors='coerce').fillna(0)
-            gewest_data[f'{metric}_12m'] = gewest_data[metric].rolling(window=4, min_periods=1).mean()
+            gewest_data[f'{metric}_12m'] = gewest_data[metric].rolling(window=12, min_periods=1).mean()
             
             # Debug output for GitHub Actions
             print(f"  {gewest}: {len(gewest_data)} data points, range {gewest_data[metric].min():.0f}-{gewest_data[metric].max():.0f}")
@@ -290,7 +290,7 @@ class DashboardGenerator:
             gewest_data = self.df_gewest[self.df_gewest['gemeente_naam_nl'] == gewest].copy()
             if len(gewest_data) > 0:
                 gewest_data = gewest_data.sort_values('datum')
-                gewest_data['nieuwbouw_woningen_12m'] = gewest_data['nieuwbouw_woningen_totaal'].rolling(window=4, min_periods=1).mean()
+                gewest_data['nieuwbouw_woningen_12m'] = gewest_data['nieuwbouw_woningen_totaal'].rolling(window=12, min_periods=1).mean()
                 
                 for _, row in gewest_data.iterrows():
                     chart1_data.append({
@@ -335,7 +335,7 @@ class DashboardGenerator:
             gewest_data = self.df_gewest[self.df_gewest['gemeente_naam_nl'] == gewest].copy()
             if len(gewest_data) > 0:
                 gewest_data = gewest_data.sort_values('datum')
-                gewest_data['renovatie_gebouwen_12m'] = gewest_data['renovatie_gebouwen_wonen'].rolling(window=4, min_periods=1).mean()
+                gewest_data['renovatie_gebouwen_12m'] = gewest_data['renovatie_gebouwen_wonen'].rolling(window=12, min_periods=1).mean()
                 
                 for _, row in gewest_data.iterrows():
                     chart2_data.append({
@@ -393,7 +393,7 @@ class DashboardGenerator:
             gewest_data = self.df_gewest[self.df_gewest['gemeente_naam_nl'] == gewest].copy()
             if len(gewest_data) > 0:
                 gewest_data = gewest_data.sort_values('datum')
-                gewest_data['aandeel_flats_12m'] = gewest_data['aandeel_flats'].rolling(window=4, min_periods=1).mean()
+                gewest_data['aandeel_flats_12m'] = gewest_data['aandeel_flats'].rolling(window=12, min_periods=1).mean()
                 
                 for _, row in gewest_data.iterrows():
                     chart3_data.append({
