@@ -474,11 +474,11 @@ class DashboardGenerator:
             <p>{analysis['description']}</p>
             
             <div class="chart-container">
-                <div class="chart-actions">
-                    <button class="btn btn-small btn-copy" onclick="copyToClipboard('{iframe_code_chart}', 'Grafiek iframe code gekopieerd!')">Kopieer iframe</button>
-                </div>
                 <div class="chart-wrapper">
                     <iframe src="charts/{analysis['chart_file']}_standalone.html" width="100%" height="650" frameborder="0"></iframe>
+                </div>
+                <div class="chart-actions">
+                    <button class="btn btn-small btn-copy" onclick="copyToClipboard('{iframe_code_chart}', 'Grafiek iframe code gekopieerd!')">Kopieer iframe code voor grafiek</button>
                 </div>
             </div>
             
@@ -488,7 +488,7 @@ class DashboardGenerator:
                     <h4 class="table-title">Data: {analysis['title']} ({analysis['data_rows']:,} records)</h4>
                     <div class="table-buttons">
                         <a href="csv/{analysis['csv_file']}" class="btn btn-small btn-download" download>Download CSV</a>
-                        <button class="btn btn-small btn-copy" onclick="copyToClipboard('{iframe_code_table}', 'Tabel iframe code gekopieerd!')">Kopieer iframe</button>
+                        <button class="btn btn-small btn-copy" onclick="copyToClipboard('{iframe_code_table}', 'Tabel iframe code gekopieerd!')">Kopieer iframe code voor tabel</button>
                     </div>
                 </div>
                 <div class="table-scroll">
