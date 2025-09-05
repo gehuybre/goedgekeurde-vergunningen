@@ -111,6 +111,13 @@ class DashboardGenerator:
             y_values = gewest_data[metric].astype(float).tolist()
             y_trend_values = gewest_data[f'{metric}_12m'].astype(float).tolist()
             
+            # Create readable date and period info for hover
+            hover_text = []
+            for _, row in gewest_data.iterrows():
+                quarter_map = {1: 'Q1', 2: 'Q2', 3: 'Q3', 4: 'Q4'}
+                period_text = f"{row['jaar']} {quarter_map[row['periode']]}"
+                hover_text.append(period_text)
+            
             color = self.gewest_colors[gewest]
             
             # Add monthly data trace first
@@ -125,12 +132,10 @@ class DashboardGenerator:
                 showlegend=True,
                 legendgroup=gewest,  # Group traces by gewest
                 legendgrouptitle_text=gewest,
-                customdata=gewest_data[['jaar', 'periode']].values,
+                text=hover_text,
                 hovertemplate='<b>%{fullData.name}</b><br>' +
-                             'Datum: %{x}<br>' +
-                             'Waarde: %{y:,.0f}<br>' +
-                             'Jaar: %{customdata[0]}<br>' +
-                             'Periode: Q%{customdata[1]}<extra></extra>'
+                             'Periode: %{text}<br>' +
+                             'Waarde: %{y:,.0f}<extra></extra>'
             ))
             
             # Add moving average trace second (will appear below monthly in legend)
@@ -142,8 +147,9 @@ class DashboardGenerator:
                 line=dict(color=color, width=3),
                 showlegend=True,
                 legendgroup=gewest,  # Same group as monthly trace
+                text=hover_text,
                 hovertemplate='<b>%{fullData.name}</b><br>' +
-                             'Datum: %{x}<br>' +
+                             'Periode: %{text}<br>' +
                              'Trend waarde: %{y:,.1f}<extra></extra>'
             ))
         
