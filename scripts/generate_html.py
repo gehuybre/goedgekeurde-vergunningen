@@ -4,6 +4,9 @@ Generate HTML Dashboard for Bouwvergunningen België
 
 This script generates a complete HTML dashboard with interactive charts,
 downloadable CSV files, and iframe embed codes.
+
+Version: 2.1 - Fixed chart data indexing and improved legend grouping
+Date: September 2025
 """
 
 import pandas as pd
@@ -99,6 +102,9 @@ class DashboardGenerator:
             gewest_data = gewest_data.copy()
             gewest_data[metric] = pd.to_numeric(gewest_data[metric], errors='coerce').fillna(0)
             gewest_data[f'{metric}_12m'] = gewest_data[metric].rolling(window=4, min_periods=1).mean()
+            
+            # Debug output for GitHub Actions
+            print(f"  {gewest}: {len(gewest_data)} data points, range {gewest_data[metric].min():.0f}-{gewest_data[metric].max():.0f}")
             
             # Convert to basic Python types to avoid any pandas/plotly issues
             x_values = [d.strftime('%Y-%m-%d') for d in gewest_data['datum']]
