@@ -43,7 +43,7 @@ class DashboardGenerator:
         
     def load_and_prepare_data(self):
         """Load and prepare the building permits data"""
-        print("📊 Loading and preparing data...")
+        print("Loading and preparing data...")
         
         # Load the data
         df = pd.read_csv(self.data_dir / "building_permits.csv")
@@ -82,14 +82,14 @@ class DashboardGenerator:
         self.df_gewest = df_gewest
         self.gewesten = df_gewest['gemeente_naam_nl'].unique()
         
-        print(f"✅ Data loaded: {df.shape[0]:,} rows, {len(self.gewesten)} gewesten")
+        print(f"Data loaded: {df.shape[0]:,} rows, {len(self.gewesten)} gewesten")
         
     def create_trend_chart(self, data, metric, title, y_label, filename):
         """Create trend chart with monthly data and moving average"""
         fig = go.Figure()
         
         for gewest in self.gewesten:
-            gewest_data = data[data['gemeente_naam_nl'] == gewest].sort_values('datum')
+            gewest_data = data[data['gemeente_naam_nl'] == gewest].sort_values('datum').reset_index(drop=True)
             
             if len(gewest_data) == 0:
                 continue
@@ -102,8 +102,8 @@ class DashboardGenerator:
             
             # Monthly data (dotted line)
             fig.add_trace(go.Scatter(
-                x=gewest_data['datum'],
-                y=gewest_data[metric],
+                x=gewest_data['datum'].tolist(),
+                y=gewest_data[metric].tolist(),
                 mode='lines+markers',
                 name=f'{gewest} (maand)',
                 line=dict(color=color, dash='dot', width=2),
@@ -114,8 +114,8 @@ class DashboardGenerator:
             
             # Moving average (solid line)
             fig.add_trace(go.Scatter(
-                x=gewest_data['datum'],
-                y=gewest_data[f'{metric}_12m'],
+                x=gewest_data['datum'].tolist(),
+                y=gewest_data[f'{metric}_12m'].tolist(),
                 mode='lines',
                 name=f'{gewest} (trend)',
                 line=dict(color=color, width=3),
@@ -231,12 +231,12 @@ class DashboardGenerator:
         
     def generate_analyses(self):
         """Generate all analyses and save files"""
-        print("📈 Generating analyses...")
+        print("Generating analyses...")
         
         analyses = []
         
         # Analysis 1: Nieuwbouw woningen totaal
-        print("  → Nieuwbouw woningen totaal")
+        print("Nieuwbouw woningen totaal")
         fig1 = self.create_trend_chart(
             self.df_gewest,
             'nieuwbouw_woningen_totaal',
@@ -282,7 +282,7 @@ class DashboardGenerator:
         })
         
         # Analysis 2: Renovatie gebouwen wonen
-        print("  → Renovatie gebouwen wonen")
+        print("Renovatie gebouwen wonen")
         fig2 = self.create_trend_chart(
             self.df_gewest,
             'renovatie_gebouwen_wonen',
@@ -327,7 +327,7 @@ class DashboardGenerator:
         })
         
         # Analysis 3: Aandeel flats
-        print("  → Aandeel flats")
+        print("Aandeel flats")
         fig3 = self.create_trend_chart(
             self.df_gewest,
             'aandeel_flats',
@@ -387,7 +387,7 @@ class DashboardGenerator:
         })
         
         self.analyses = analyses
-        print(f"✅ Generated {len(analyses)} analyses")
+        print(f"Generated {len(analyses)} analyses")
         
     def generate_stats(self):
         """Generate summary statistics"""
@@ -402,7 +402,7 @@ class DashboardGenerator:
         
     def generate_html(self):
         """Generate the main HTML dashboard"""
-        print("🌐 Generating HTML dashboard...")
+        print("Generating HTML dashboard...")
         
         stats = self.generate_stats()
         
@@ -419,7 +419,7 @@ class DashboardGenerator:
 <body>
     <div class="container">
         <header class="header">
-            <h1>🏗️ Bouwvergunningen België</h1>
+            <h1>Bouwvergunningen België</h1>
             <p>Interactieve analyse van goedgekeurde bouwvergunningen per gewest</p>
             <div class="subtitle">
                 Data van Statbel • Laatst bijgewerkt: {stats['last_updated']}
@@ -432,25 +432,6 @@ class DashboardGenerator:
             <a href="#aandeel_flats">Aandeel flats</a>
             <a href="#downloads">Downloads</a>
         </nav>
-        
-        <div class="stats-grid">
-            <div class="stat-card">
-                <span class="stat-number">{stats['total_records']}</span>
-                <span class="stat-label">Totaal records</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-number">{stats['gewesten_count']}</span>
-                <span class="stat-label">Gewesten</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-number">{stats['year_range']}</span>
-                <span class="stat-label">Periode</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-number">{stats['total_locations']}</span>
-                <span class="stat-label">Locaties</span>
-            </div>
-        </div>
 """
         
         # Add each analysis section
@@ -465,20 +446,20 @@ class DashboardGenerator:
             
             <div class="chart-container">
                 <div class="chart-actions">
-                    <button class="btn btn-small btn-copy" onclick="copyToClipboard('{iframe_code_chart}', 'Grafiek iframe code gekopieerd!')">📋 Kopieer iframe</button>
+                    <button class="btn btn-small btn-copy" onclick="copyToClipboard('{iframe_code_chart}', 'Grafiek iframe code gekopieerd!')">Kopieer iframe</button>
                 </div>
                 <div class="chart-wrapper">
                     <iframe src="charts/{analysis['chart_file']}_standalone.html" width="100%" height="650" frameborder="0"></iframe>
                 </div>
             </div>
             
-            <h3>📋 Data tabel (laatste 30 entries)</h3>
+            <h3>Data tabel (laatste 30 entries)</h3>
             <div class="table-container">
                 <div class="table-actions">
                     <h4 class="table-title">Data: {analysis['title']} ({analysis['data_rows']:,} records)</h4>
                     <div class="table-buttons">
-                        <a href="csv/{analysis['csv_file']}" class="btn btn-small btn-download" download>💾 Download CSV</a>
-                        <button class="btn btn-small btn-copy" onclick="copyToClipboard('{iframe_code_table}', 'Tabel iframe code gekopieerd!')">📋 Kopieer iframe</button>
+                        <a href="csv/{analysis['csv_file']}" class="btn btn-small btn-download" download>Download CSV</a>
+                        <button class="btn btn-small btn-copy" onclick="copyToClipboard('{iframe_code_table}', 'Tabel iframe code gekopieerd!')">Kopieer iframe</button>
                     </div>
                 </div>
                 <div class="table-scroll">
@@ -491,7 +472,7 @@ class DashboardGenerator:
         # Add downloads section
         html_content += f"""
         <section class="downloads-section" id="downloads">
-            <h2>📁 Downloads</h2>
+            <h2>Downloads</h2>
             <p>Download alle data in CSV formaat voor eigen gebruik.</p>
             
             <div class="downloads-grid">
@@ -513,7 +494,7 @@ class DashboardGenerator:
         <footer class="footer">
             <p>
                 🔗 <a href="https://github.com/gehuybre/goedgekeurde-vergunningen" target="_blank">GitHub Repository</a> • 
-                📊 Data: <a href="https://statbel.fgov.be/" target="_blank">Statbel</a> • 
+                Data: <a href="https://statbel.fgov.be/" target="_blank">Statbel</a> • 
                 🏛️ Gewesten: Vlaams Gewest, Waals Gewest, Brussels Hoofdstedelijk Gewest
             </p>
             <p style="margin-top: 1rem; opacity: 0.8; font-size: 0.9rem;">
@@ -574,20 +555,20 @@ class DashboardGenerator:
         
         # Save the HTML file
         (self.docs_dir / "index.html").write_text(html_content, encoding='utf-8')
-        print("✅ Generated index.html")
+        print("Generated index.html")
 
 def main():
     """Main function to generate the dashboard"""
-    print("🚀 Starting dashboard generation...")
+    print("Starting dashboard generation...")
     
     generator = DashboardGenerator()
     generator.load_and_prepare_data()
     generator.generate_analyses()
     generator.generate_html()
     
-    print("🎉 Dashboard generation completed!")
-    print(f"📁 Files generated in: {generator.docs_dir}")
-    print("🌐 Ready for GitHub Pages deployment")
+    print("Dashboard generation completed!")
+    print(f"Files generated in: {generator.docs_dir}")
+    print("Ready for GitHub Pages deployment")
 
 if __name__ == "__main__":
     main()
