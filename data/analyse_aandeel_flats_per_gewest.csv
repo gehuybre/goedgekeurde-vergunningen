@@ -231,14 +231,14 @@ datum,gewest,jaar,periode,aandeel_flats_maand,aandeel_flats_trend,appartementen_
 2023-04-01,Waals Gewest,2023,2,49.4,39.4,400.0,809.0
 2023-07-01,Waals Gewest,2023,3,40.8,41.0,395.0,969.0
 2023-10-01,Waals Gewest,2023,4,41.5,43.7,299.0,720.0
-2024-01-01,Waals Gewest,2024,1,52.3,46.0,498.0,953.0
-2024-04-01,Waals Gewest,2024,2,70.2,51.2,929.0,1324.0
-2024-07-01,Waals Gewest,2024,3,50.4,53.6,389.0,772.0
-2024-10-01,Waals Gewest,2024,4,54.1,56.8,455.0,841.0
-2025-01-01,Waals Gewest,2025,1,39.5,53.5,275.0,697.0
-2025-04-01,Waals Gewest,2025,2,41.3,46.3,229.0,555.0
-2025-07-01,Waals Gewest,2025,3,39.8,43.7,229.0,575.0
-2025-10-01,Waals Gewest,2025,4,54.1,43.7,437.0,808.0
+2024-01-01,Waals Gewest,2024,1,52.1,46.0,498.0,955.0
+2024-04-01,Waals Gewest,2024,2,70.4,51.2,925.0,1313.0
+2024-07-01,Waals Gewest,2024,3,50.3,53.6,386.0,767.0
+2024-10-01,Waals Gewest,2024,4,54.2,56.8,458.0,845.0
+2025-01-01,Waals Gewest,2025,1,39.2,53.5,273.0,697.0
+2025-04-01,Waals Gewest,2025,2,38.4,45.5,249.0,648.0
+2025-07-01,Waals Gewest,2025,3,39.9,42.9,227.0,569.0
+2025-10-01,Waals Gewest,2025,4,52.6,42.5,449.0,854.0
 1996-01-01,Brussels Hoofdstedelijk Gewest,1996,1,88.1,88.1,96.0,109.0
 1996-04-01,Brussels Hoofdstedelijk Gewest,1996,2,83.3,85.7,15.0,18.0
 1996-07-01,Brussels Hoofdstedelijk Gewest,1996,3,86.2,85.9,100.0,116.0
@@ -355,7 +355,7 @@ datum,gewest,jaar,periode,aandeel_flats_maand,aandeel_flats_trend,appartementen_
 2024-04-01,Brussels Hoofdstedelijk Gewest,2024,2,97.7,95.5,421.0,431.0
 2024-07-01,Brussels Hoofdstedelijk Gewest,2024,3,96.4,96.1,270.0,280.0
 2024-10-01,Brussels Hoofdstedelijk Gewest,2024,4,96.9,97.2,190.0,196.0
-2025-01-01,Brussels Hoofdstedelijk Gewest,2025,1,96.9,97.0,186.0,192.0
-2025-04-01,Brussels Hoofdstedelijk Gewest,2025,2,98.4,97.2,246.0,250.0
+2025-01-01,Brussels Hoofdstedelijk Gewest,2025,1,96.9,97.0,185.0,191.0
+2025-04-01,Brussels Hoofdstedelijk Gewest,2025,2,98.4,97.2,245.0,249.0
 2025-07-01,Brussels Hoofdstedelijk Gewest,2025,3,80.0,93.0,8.0,10.0
-2025-10-01,Brussels Hoofdstedelijk Gewest,2025,4,99.3,93.7,152.0,153.0
+2025-10-01,Brussels Hoofdstedelijk Gewest,2025,4,99.3,93.7,148.0,149.0
